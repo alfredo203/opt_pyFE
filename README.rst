@@ -16,7 +16,10 @@ opt_pyFE
 
 
 
-Este proyecto es una optimización de portafolio utilizando información extraída de yahoo finance
+Este proyecto es una optimización de portafolio utilizando información extraída de yahoo finance.
+
+"Potencia tus inversiones con nuestro avanzado paquete de optimización de portafolio."  Nuestra herramienta, basada en algoritmos sofisticados, analiza tu perfil de riesgo y te ayuda a construir una cartera diversificada que maximice tus rendimientos y minimice tu exposición a pérdidas.  Con seguimiento en tiempo real y rebalanceos automáticos, tendrás la tranquilidad de saber que tu dinero está trabajando inteligentemente para ti. ¡Toma el control de tu futuro financiero hoy mismo!
+
 
 
 * Free software: MIT license
