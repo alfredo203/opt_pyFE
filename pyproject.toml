@@ -8,10 +8,10 @@ version = "0.1.0"
 description = "Este proyecto es una optimización de portafolio utilizando información extraída de yahoo finance"
 readme = "README.rst"
 authors = [
-  {name = "Equipo Python FE", email = "e.salasfr23@gmail.com"}
+  {name = "Equipo Python FE"}
 ]
 maintainers = [
-  {name = "Equipo Python FE", email = "e.salasfr23@gmail.com"}
+  {name = "Equipo Python FE"}
 ]
 classifiers = [
 

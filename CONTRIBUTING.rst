@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/[EDN23,gabrielaadehesa,Dayjingg,Deon9802,alfredo203]/opt_pyFE/issues.
+Report bugs at https://github.com/EDN23/opt_pyFE/issues.
 
 If you are reporting a bug, please include:
 

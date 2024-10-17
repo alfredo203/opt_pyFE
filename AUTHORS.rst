@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Equipo Python FE <e.salasfr23@gmail.com>
+* Equipo Python FE <>
 
 Contributors
 ------------
