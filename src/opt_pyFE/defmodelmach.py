@@ -2,8 +2,11 @@
 """
 Created on Thu Oct  3 13:50:52 2024
 
-@author: Admin
+@author: Titiru (alfredo203 comenta 24/Oct/2024)
 """
+
+#
+
 import yfinance as yf
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
@@ -29,8 +32,7 @@ def descargar_datos_tickers(tickers, inicio, final, datos_req=["Close"]):
     return df_aj
 
 
-
-def modelomach(tickers, inicio, final, epochs=45, batch_size=33, neuronas=50, time_step=1):
+def modelo_match(tickers, inicio, final, epochs=45, batch_size=33, neuronas=50, time_step=1):
     """
     utiliza la funcion anterior para jalar los datos, entrena por cada uno de los tikers el modelo y te da
     una prediccion de 15 dias en el futuro.
@@ -138,30 +140,30 @@ def modelomach(tickers, inicio, final, epochs=45, batch_size=33, neuronas=50, ti
 
     return predicciones_dict
 
-# ejemplo de uso 
-tickers = ["AA","AAL","AAPL","AMM.TO","ABBV","ABNB","ACTINVRB.MX","AC","AFRM",
-           "AGNC","ALFAA.MX","ALPEKA.MX","ALSEA.MX","AMAT","AMD","AMX","AMZN",
-           "APA","ASURB.MX","ATER","ATOS","AIY.DE","AVGO","AXP","BABA","BAC",
-           "BA","BBAJIOO.MX","BIMBOA.MX","BMY","BNGO","CAT","CCL",
-           "CEMEXCPO.MX","CHDRAUIB.MX","CLF","COST","CRM","CSCO",
-           "CUERVO.MX","CVS","CVX","C","DAL","DIS","DVN", "ETSY",
-           "FANG","FCX","FDX","FEMSAUBD.MX","FIBRAMQ12.MX","FIBRAPL14.MX",
-           "FSLR","FUBO","FUBO","FUNO11.MX","F","GAPB.MX","GCARSOA1.MX","GCC",
-           "GENTERA.MX","GE","GFINBURO.MX","GFNORTEO.MX","GILD","GMEXICOB.MX",
-           "GME","GM","GOLD","GOOGL","GRUMAB.MX","HD","INTC","JNJ","JPM",
-           "KIMBERA.MX","KOFUBL.MX","KO","LABB.MX",
-          "LASITEB-1.MX","LCID","LIVEPOLC-1.MX","LLY","LUV","LVS","LYFT","MARA",
-          "MARA","MA","MCD","MEGACPO.MX","MELIN.MX","META","MFRISCOA-1.MX","MGM",
-          "MRK","MRNA","MRO","MSFT","MU","NCLHN.MX","NFLX","NKE","NKLA","NUN.MX",
-          "NVAX","NVDA","OMAB.MX","ORBIA.MX","ORCL","OXY1.MX","PARA","PBRN.MX","PE&OLES.MX",
-          "PEP","PFE","PG","PINFRA.MX","PINS","PLTR","PYPL","QCOM","Q.MX","RCL",
-          "RIOT","RIVN","ROKU","RA.MX","SBUX","SHOP","SITES1A-1.MX","SKLZ",
-          "SOFI","SPCE","SQ","TALN.MX","TERRA13.MX","TGT","TMO",
-          "TSLA","TSMN.MX","TWLO","TX","T","UAL","UBER","UNH","UPST","VESTA.MX",
-          "VOLARA.MX","VZ","V","WALMEX.MX","WFC","WMT","WYNN","XOM","X","ZM"]
-inicio = "2022-03-01"
-final = "2024-10-04"
-predicciones_multiples = modelomach(tickers, inicio, final)
+# Ejemplo de uso 
+# tickers = ["AA","AAL","AAPL","AMM.TO","ABBV","ABNB","ACTINVRB.MX","AC","AFRM",
+#            "AGNC","ALFAA.MX","ALPEKA.MX","ALSEA.MX","AMAT","AMD","AMX","AMZN",
+#            "APA","ASURB.MX","ATER","ATOS","AIY.DE","AVGO","AXP","BABA","BAC",
+#            "BA","BBAJIOO.MX","BIMBOA.MX","BMY","BNGO","CAT","CCL",
+#            "CEMEXCPO.MX","CHDRAUIB.MX","CLF","COST","CRM","CSCO",
+#            "CUERVO.MX","CVS","CVX","C","DAL","DIS","DVN", "ETSY",
+#            "FANG","FCX","FDX","FEMSAUBD.MX","FIBRAMQ12.MX","FIBRAPL14.MX",
+#            "FSLR","FUBO","FUBO","FUNO11.MX","F","GAPB.MX","GCARSOA1.MX","GCC",
+#            "GENTERA.MX","GE","GFINBURO.MX","GFNORTEO.MX","GILD","GMEXICOB.MX",
+#            "GME","GM","GOLD","GOOGL","GRUMAB.MX","HD","INTC","JNJ","JPM",
+#            "KIMBERA.MX","KOFUBL.MX","KO","LABB.MX",
+#           "LASITEB-1.MX","LCID","LIVEPOLC-1.MX","LLY","LUV","LVS","LYFT","MARA",
+#           "MARA","MA","MCD","MEGACPO.MX","MELIN.MX","META","MFRISCOA-1.MX","MGM",
+#           "MRK","MRNA","MRO","MSFT","MU","NCLHN.MX","NFLX","NKE","NKLA","NUN.MX",
+#           "NVAX","NVDA","OMAB.MX","ORBIA.MX","ORCL","OXY1.MX","PARA","PBRN.MX","PE&OLES.MX",
+#           "PEP","PFE","PG","PINFRA.MX","PINS","PLTR","PYPL","QCOM","Q.MX","RCL",
+#           "RIOT","RIVN","ROKU","RA.MX","SBUX","SHOP","SITES1A-1.MX","SKLZ",
+#           "SOFI","SPCE","SQ","TALN.MX","TERRA13.MX","TGT","TMO",
+#           "TSLA","TSMN.MX","TWLO","TX","T","UAL","UBER","UNH","UPST","VESTA.MX",
+#           "VOLARA.MX","VZ","V","WALMEX.MX","WFC","WMT","WYNN","XOM","X","ZM"]
+# inicio = "2022-03-01"
+# final = "2024-10-04"
+# predicciones_multiples = modelo_match(tickers, inicio, final)
 
 
 
