@@ -31,6 +31,11 @@ Features
 
 * TODO
 
+Tutorial
+--------
+
+* Como usarlo
+
 Credits
 -------
 
