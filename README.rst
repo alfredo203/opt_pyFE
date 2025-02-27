@@ -38,6 +38,42 @@ Features
 Tutorial
 --------
 
+Se comienza instalando e importando las librerías necesarias:
+
+import yfinance as yf
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+Definir el rango de fechas:
+El código define un rango de fechas para descargar los datos históricos
+
+start_date = '2024-01-01'
+end_date = '2025-02-23'
+
+La función realiza lo siguiente:
+
+Descarga los datos históricos del ticker.
+Calcula la media móvil de 50 días.
+Realiza una regresión lineal para predecir el precio de cierre.
+Genera un gráfico que muestra el precio de cierre, la media móvil y la línea de regresión.
+
+Ejemplo de uso
+Analizar las acciones de NVIDIA (NVDA) y Apple (AAPL). Sería de la siguiente manera:
+
+# Definir los tickers que quieres analizar
+tickers = ['NVDA', 'AAPL']
+
+# Bucle para procesar cada ticker
+# también se puede modificar el window 
+# de la media móvil, por default 
+# window=50
+
+for ticker in tickers:
+    proyeccion(ticker, window=20)
+
+
 * get data: Recupera datos historicos de las emisoras alojadas en el registro de Yahoo Finance. Devuelve una tabla con la información solicitada, una tabla con los rendimientos de las emisoras, la media de los rendimientos y una matriz de covarianza. Requiere una lista con los tickers de las emisoras, así como fechas de inicio y final del periodo a trabajar
 
 tickers = ["GOOG","BKNG","META", "AAPL","TSLA","^IRX"] #creamos un portafolio
@@ -49,7 +85,7 @@ rendimiento, rendimiento_medio, covmatrix = getdata(tickers, start_date, end_dat
 rendimiento = rendimiento.dropna() #eliminamos los valores nulos 
 
 
-* desempeno: Devuelve 2 valor, el rendimiento y la desviación estandar. Requiere una lista de pesos por ticker (que deben sumar 1), la media de rendimiento, una matriz de covarianza y el periodo analizar expresado en días
+* desempeno: Devuelve 2 valores, el rendimiento y la desviación estandar. Requiere una lista de pesos por ticker (que deben sumar 1), la media de rendimiento, una matriz de covarianza y el periodo analizar expresado en días
 
 peso = np.array([0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666])
 peso /= np.sum(peso) #redondeamos los pesos para que sumen 1
