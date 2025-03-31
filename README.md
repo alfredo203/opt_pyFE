@@ -264,6 +264,54 @@ print(" MC CVaR 95th CI          :    ", round(MCCVaR, 2))
 resum(inversion_inicial, inversion_inicial, hVaR, hCVaR, MCVaR, MCCVaR, pRet)
 ```
 
+# Tutorial Analíticos: Proyección de Acciones con Python
+
+## 1. Importar las librerías
+```python
+import yfinance as yf
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+```
+
+##  2. Definir el rango de fechas
+```python
+Copy
+start_date = '2024-01-01'
+end_date = '2024-09-23'
+```
+
+## 3. Función `proyeccion`
+La función realiza:
+- **Descarga de datos**:
+  - Usa `yfinance` para obtener precios históricos.
+  - Filtra por `start_date` y `end_date`.
+- **Cálculos**:
+  - Media móvil (default: 50 días).
+  - Regresión lineal con `scikit-learn`.
+- **Gráficos**:
+  - Muestra: precio de cierre, media móvil y tendencia.
+
+## 4. Ejemplo de uso
+Analizar múltiples tickers:
+```python
+# Definir los tickers a analizar
+tickers = ['NVDA', 'AAPL']
+
+# Bucle para procesar cada ticker
+for ticker in tickers:
+    proyeccion(ticker)
+```
+
+Cambiar la ventana de la media móvil (ej: 20 días):
+```python
+Copy
+for ticker in tickers:
+    proyeccion(ticker, window=20)  # Media móvil de 20 días
+```
+
+
 Troubleshooting
 --------
 
