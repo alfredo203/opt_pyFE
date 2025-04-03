@@ -7,8 +7,10 @@ Created on Tue Apr  1 14:03:09 2025
 
 import yfinance as yf
 import matplotlib.pyplot as plt
+import pandas as pd 
 
-def bandas_bollinger(tickers, fecha_inicio, fecha_final, window=20):
+def bandas_bollinger(tickers, start_date, end_date, window=20):
+
     
     # pone las acciones en formato de lista para poder precesar mas de uno
     if isinstance(tickers, str):  
@@ -18,7 +20,10 @@ def bandas_bollinger(tickers, fecha_inicio, fecha_final, window=20):
     datos = {}
 
     for ticker in tickers:
-        data = yf.download(ticker, start=fecha_inicio, end=fecha_final)
+        data = yf.download(ticker, start=start_date, end=end_date)
+
+        if not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame()
         
         # Calculo de la media movil y desviacion estandar
         data['MA20'] = data['Close'].rolling(window=window).mean()
@@ -48,10 +53,10 @@ def bandas_bollinger(tickers, fecha_inicio, fecha_final, window=20):
     return datos  # Devuelve un diccionario con los DataFrames de cada ticker
 
 # Ejemplo de uso
-# tickers = ['AAPL', 'MSFT']  # Puedes agregar más tickers
-# fecha_inicio = '2024-01-01'
-# fecha_final = '2024-06-01'
+tickers = ['AAPL', 'MSFT']  # Puedes agregar más tickers
+start_date = '2024-01-01'
+end_date = '2024-06-01'
 
-# bandas_bollinger(tickers, fecha_inicio, fecha_final)
+bandas_bollinger(tickers, start_date, end_date)
 
-             
+             # if de data frame si son datos hacerlo dataframe y si no es data frame convertirlo en data frame
