@@ -42,6 +42,7 @@ sentiment_pipeline = pipeline(
     padding=True,
     batch_size=32
 )
+
 print(f"\nPipeline configurado con el modelo: {model_name}")
 
 # ---------------------------------------------------------------------------------
@@ -53,17 +54,22 @@ def create_binary_hf_dataset(texts_list, string_labels_list, class_order_list):
     Crea un Dataset de Hugging Face con etiquetas binarias codificadas.
     class_order_list: Define el mapeo, ej: ['negative', 'positive'] -> 0, 1
     """
-    temp_dataset = Dataset.from_dict({"text": texts_list, "label_str": string_labels_list})
+    temp_dataset = Dataset.from_dict({"text": texts_list, 
+                                      "label_str": string_labels_list})
     actual_present_labels = sorted(list(set(string_labels_list)))
     if not all(lbl in class_order_list for lbl in actual_present_labels):
         print(f"Advertencia: Las etiquetas presentes {actual_present_labels} no coinciden completamente con class_order_list {class_order_list}. Usando etiquetas presentes.")
         class_order_list_effective = actual_present_labels
     else:
-        class_order_list_effective = [lbl for lbl in class_order_list if lbl in actual_present_labels]
+        class_order_list_effective = [lbl for 
+                                      lbl in class_order_list if 
+                                      lbl in actual_present_labels]
 
     if not class_order_list_effective:
         print("Error: No hay etiquetas para crear el ClassLabel.")
-        return Dataset.from_dict({"text": [], "label": []}).cast_column('label', ClassLabel(names=[]))
+        return Dataset.from_dict({"text": [], 
+                                  "label": []}).cast_column('label',
+                                                            ClassLabel(names=[]))
 
     feature_class_label = ClassLabel(names=class_order_list_effective)
     final_dataset = temp_dataset.cast_column('label_str', feature_class_label)
@@ -71,24 +77,29 @@ def create_binary_hf_dataset(texts_list, string_labels_list, class_order_list):
     return final_dataset.shuffle(seed=42)
 
 
-def perform_binary_inference_forced_choice(dataset_binary, pipeline_model, binary_classes_names_ordered):
+def perform_binary_inference_forced_choice(dataset_binary, 
+                                           pipeline_model, 
+                                           binary_classes_names_ordered):
     """
-    Realiza inferencia en un dataset binario FORZANDO una elección entre las dos clases binarias,
-    normalizando sus scores.
-    binary_classes_names_ordered: Lista de nombres de clase en el orden deseado para 0, 1 (ej: ['negative', 'positive'])
+    Realiza inferencia en un dataset binario FORZANDO una elección entre las 
+    dos clases binarias, normalizando sus scores.
+    binary_classes_names_ordered: Lista de nombres de clase en el orden deseado
+    para 0, 1 (ej: ['negative', 'positive'])
     """
     test_txt = dataset_binary["text"]
-    y_true = dataset_binary["label"] # Ya son 0, 1 según binary_classes_names_ordered
+    # Ya son 0, 1 según binary_classes_names_ordered
+    y_true = dataset_binary["label"] 
     
-    # binary_classes_names_ordered[0] será la clase mapeada a 0 (ej. 'negative')
-    # binary_classes_names_ordered[1] será la clase mapeada a 1 (ej. 'positive')
+    # binary_classes_names_ordered[0] será la clase mapeada a 0 (ej.'negative')
+    # binary_classes_names_ordered[1] será la clase mapeada a 1 (ej.'positive')
 
     preds = [] # Lista para guardar las predicciones finales (0 o 1)
-  
-    results_batch = pipeline_model(test_txt) # Esto devuelve una lista de listas de diccionarios
-
+    
+  # Esto devuelve una lista de listas de diccionarios
+    results_batch = pipeline_model(test_txt) 
     for i, res_item_list in enumerate(results_batch):
-        # res_item_list es una lista de diccionarios, ej: [{'label': 'positive', 'score': 0.9}, {'label': 'negative', ...}]
+        # res_item_list es una lista de diccionarios,
+        # ej: [{'label': 'positive', 'score': 0.9}, {'label': 'negative', ...}]
         
         score_class0_original = 0.0 # Score para binary_classes_names_ordered[0]
         score_class1_original = 0.0 # Score para binary_classes_names_ordered[1]
@@ -134,28 +145,44 @@ def plot_evaluation_metrics(y_true, preds, class_names, dataset_title_suffix):
     print("Accuracy:", accuracy_score(y_true, preds))
     print("F1-macro:", f1_score(y_true, preds, average="macro"))
     
-    report_dict = classification_report(y_true, preds, target_names=class_names, output_dict=True, zero_division=0)
+    report_dict = classification_report(y_true, 
+                                        preds,
+                                        target_names=class_names,
+                                        output_dict=True,
+                                        zero_division=0)
     num_classes_plot = len(class_names)
 
     # 1. Matriz de Confusión
-    cm = confusion_matrix(y_true, preds, labels=list(range(num_classes_plot)))
+    cm = confusion_matrix(y_true, 
+                          preds,
+                          labels=list(range(num_classes_plot)))
     plt.figure(figsize=(5, 4) if num_classes_plot <=2 else (6,5))
-    plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)
+    plt.imshow(cm, 
+               interpolation="nearest",
+               cmap=plt.cm.Blues)
     plt.title(f"Matriz de Confusión ({dataset_title_suffix})")
     plt.colorbar()
-    plt.xticks(np.arange(num_classes_plot), class_names, rotation=45, ha="right")
+    plt.xticks(np.arange(num_classes_plot),
+               class_names,
+               rotation=45, 
+               ha="right")
     plt.yticks(np.arange(num_classes_plot), class_names)
     threshold = cm.max() / 2.0 if cm.max() > 0 else 1.0
     for i in range(cm.shape[0]):
         for j in range(cm.shape[1]):
-            plt.text(j, i, cm[i, j], ha="center", va="center", color="white" if cm[i, j] > threshold else "black")
+            plt.text(j, i, cm[i, j], 
+                     ha="center", 
+                     va="center",
+                     color="white" if cm[i, j] > threshold else "black")
     plt.ylabel("Etiqueta verdadera")
     plt.xlabel("Etiqueta predicha")
     plt.tight_layout()
     plt.show()
 
     # 2. Gráfica de Precision, Recall y F1‑Score por clase
-    valid_class_labels = [lbl for lbl in class_names if lbl in report_dict and isinstance(report_dict[lbl], dict)]
+    valid_class_labels = [lbl for lbl in class_names if
+                          lbl in report_dict and 
+                          isinstance(report_dict[lbl], dict)]
     
     if not valid_class_labels:
         print("No hay datos de clases válidas para graficar Precision, Recall, F1-Score.")
@@ -182,7 +209,12 @@ def plot_evaluation_metrics(y_true, preds, class_names, dataset_title_suffix):
         for bars_group in [bars1, bars2, bars3]:
             for bar in bars_group:
                 height = bar.get_height()
-                plt.text(bar.get_x() + bar.get_width()/2., height + 0.01, f"{height:.2f}", ha='center', va='bottom', fontsize=9)
+                plt.text(bar.get_x() + bar.get_width()/2., 
+                         height + 0.01, 
+                         f"{height:.2f}",
+                         ha='center', 
+                         va='bottom',
+                         fontsize=9)
         plt.tight_layout()
         plt.show()
 
@@ -203,7 +235,11 @@ def plot_evaluation_metrics(y_true, preds, class_names, dataset_title_suffix):
         plt.title(f"F2‑score por clase ({dataset_title_suffix})")
         plt.ylabel("F2‑score")
         for bar, val in zip(bar_f2, f2_vals):
-            plt.text(bar.get_x() + bar.get_width()/2, val + 0.02, f"{val:.2f}", ha="center", va="bottom")
+            plt.text(bar.get_x() + bar.get_width()/2, 
+                     val + 0.02, 
+                     f"{val:.2f}",
+                     ha="center",
+                     va="bottom")
         plt.tight_layout()
         plt.show()
 
@@ -230,17 +266,21 @@ print(f"Número total de muestras '{positive_label_str}' encontradas: {num_posit
 
 data_balanced_binary = None
 if num_positive_all_samples > 0 and num_negative_samples > 0:
-    target_samples_for_balanced = min(num_positive_all_samples, num_negative_samples)
+    target_samples_for_balanced = min(num_positive_all_samples,
+                                      num_negative_samples)
     print(f"Creando dataset binario balanceado con {target_samples_for_balanced} muestras por clase.")
 
     selected_negative_samples = negative_samples_orig.shuffle(seed=42).select(range(target_samples_for_balanced))
     selected_positive_samples = positive_samples_all_orig.shuffle(seed=42).select(range(target_samples_for_balanced))
     
-    data_balanced_binary_raw = concatenate_datasets([selected_negative_samples, selected_positive_samples])
+    data_balanced_binary_raw = concatenate_datasets([selected_negative_samples,
+                                                     selected_positive_samples])
     balanced_texts_list = [ex['text'] for ex in data_balanced_binary_raw]
     balanced_labels_str_list = [original_int2str_fn(ex['label']) for ex in data_balanced_binary_raw]
 
-    data_balanced_binary = create_binary_hf_dataset(balanced_texts_list, balanced_labels_str_list, binary_class_names_ordered)
+    data_balanced_binary = create_binary_hf_dataset(balanced_texts_list,
+                                                    balanced_labels_str_list,
+                                                    binary_class_names_ordered)
     print(f"Dataset binario balanceado creado con {len(data_balanced_binary)} muestras.")
     print("Distribución en el dataset binario balanceado:")
     for class_id_bin_bal in range(len(data_balanced_binary.features["label"].names)):
@@ -253,8 +293,13 @@ else:
 
 if data_balanced_binary and len(data_balanced_binary) > 0 :
     # Usar la nueva función de inferencia con elección forzada
-    y_true_bal, preds_bal = perform_binary_inference_forced_choice(data_balanced_binary, sentiment_pipeline, binary_class_names_ordered)
-    plot_evaluation_metrics(y_true_bal, preds_bal, data_balanced_binary.features["label"].names, "Binario Balanceado (Forzado P/N)")
+    y_true_bal, preds_bal = perform_binary_inference_forced_choice(data_balanced_binary,
+                                                                   sentiment_pipeline,
+                                                                   binary_class_names_ordered)
+    plot_evaluation_metrics(y_true_bal,
+                            preds_bal,
+                            data_balanced_binary.features["label"].names,
+                            "Binario Balanceado (Forzado P/N)")
 else:
     print("Evaluación del dataset binario balanceado omitida por falta de datos.")
 
@@ -267,11 +312,14 @@ print("\n\n--- ESCENARIO 2: DATASET BINARIO COMPLETO (TODOS NEGATIVOS VS. TODOS 
 data_full_binary = None
 if num_positive_all_samples > 0 and num_negative_samples > 0:
     print(f"Creando dataset binario completo con {len(negative_samples_orig)} '{negative_label_str}' y {len(positive_samples_all_orig)} '{positive_label_str}' muestras.")
-    data_full_binary_raw = concatenate_datasets([negative_samples_orig, positive_samples_all_orig])
+    data_full_binary_raw = concatenate_datasets([negative_samples_orig,
+                                                 positive_samples_all_orig])
     full_texts_list = [ex['text'] for ex in data_full_binary_raw]
     full_labels_str_list = [original_int2str_fn(ex['label']) for ex in data_full_binary_raw]
 
-    data_full_binary = create_binary_hf_dataset(full_texts_list, full_labels_str_list, binary_class_names_ordered)
+    data_full_binary = create_binary_hf_dataset(full_texts_list,
+                                                full_labels_str_list, 
+                                                binary_class_names_ordered)
     print(f"Dataset binario completo creado con {len(data_full_binary)} muestras.")
     print("Distribución en el dataset binario completo:")
     for class_id_bin_full in range(len(data_full_binary.features["label"].names)):
