@@ -137,12 +137,6 @@ if 'results_df' in locals() and isinstance(results_df, pd.DataFrame) and not res
         # Definir el nombre del archivo Excel de salida.
         excel_file_name = "analisis_sentimiento_noticias.xlsx"
 
-        # Exportar el DataFrame a un archivo Excel.
-        # El parámetro index=False evitar que se escriba el índice del DataFrame como una columna en Excel.
-        # El parámetro sheet_name permitir nombrar la hoja dentro del archivo Excel.
-      
-      #!!! Descomentar para poder guardar el excel con las noticias evaluadas" 
-      #  results_df.to_excel(excel_file_name, index=False, sheet_name="ResultadosSentimiento")
 
         print(f"\nEl DataFrame haber sido exportado exitosamente a '{excel_file_name}'")
 
