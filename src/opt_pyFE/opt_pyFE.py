@@ -13,6 +13,8 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
+import glob
+
 
 # Definir el rango de fechas, en este caso es un programa para medias móviles
 #a 20 días
@@ -118,12 +120,18 @@ def proyeccion(tickers,start_date, end_date, window = 50):
     return pendientes
 
 # Función para descargar los datos de cierre ajustado de los tickers seleccionados
-def descargar_datos(tickers, start_date, end_date, datos_req=["Close"]):
-    # Descarga los datos de Yahoo Finance en el rango de fechas especificado
-    df_aj = yf.download(tickers, start=start_date, end=end_date)
-    # Devuelve solo las columnas solicitadas (por defecto, el precio de cierre ajustado)
-    return df_aj
-    # Calcula los rendimientos simples porcentuales
+def getdata(tickers, start_date, end_date): 
+    
+    stockdata = glob.glob("C:/Users/david/Documents/Programación/datos_optpy/*.csv")
+    df = pd.concat((pd.read_csv(stockdata) for stock in stockdata), ignore_index=True)
+    df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+    df_aj = df[(df["fecha"] >= start_date) & (df["fecha"] <= end_date)]
+    df_aj = stockdata['Cierre'] 
+    rendimiento = df_aj.pct_change() 
+    media_rendimiento = rendimiento.mean()
+    covmatrix = rendimiento.cov()
+    
+    return df_aj, rendimiento, media_rendimiento, covmatrix 
 
 # Función para calcular los rendimientos logarítmicos
     # df_aj = descargar_datos(tickers, start_date, end_date)
@@ -190,7 +198,7 @@ def mostrar_resultados(tickers, best_weights, retorno, volatilidad, sharpe_ratio
 # Función principal que ejecuta todo el análisis de portafolios
 def ejecutar_analisis(tickers, start_date, end_date):
     # Descarga los datos de los tickers seleccionados en el rango de fechas indicado
-    df_aj = descargar_datos(tickers, start_date, end_date)
+    df_aj = getdata(tickers, start_date, end_date)
     # Calcula los rendimientos logarítmicos a partir de los precios de cierre ajustados
     log_returns = calcular_rendimientos_log(df_aj)
     # Simula portafolios aleatorios basados en los rendimientos logarítmicos
@@ -231,13 +239,6 @@ def ejecutar_analisis(tickers, start_date, end_date):
 #getdata exatre los valores de cierre de las emisoras espificadas en tickers
 #devuelve el cambio porcentual de la serie (rendimiento), la media del 
 #cambio y la matriz de covarianza de las emisoras 
-def getdata(stocks, start, end): 
-    stockdata =yf.download(stocks, start=start, end=end) 
-    stockdata = stockdata['Close'] 
-    rendimiento = stockdata.pct_change() 
-    media_rendimiento = rendimiento.mean()
-    covmatrix = rendimiento.cov()
-    return rendimiento, media_rendimiento, covmatrix 
 
 #tickers = ["GOOG","BKNG","META", "AAPL","TSLA","^IRX"] #creamos un portafolio
 
