@@ -120,14 +120,14 @@ def proyeccion(tickers,start_date, end_date, window = 50):
     return pendientes
 
 # Función para descargar los datos de cierre ajustado de los tickers seleccionados
-def getdata(tickers, start_date, end_date): 
+def getdata(path, tickers, start_date, end_date): 
     
-    stockdata = glob.glob("C:/Users/david/Documents/Programación/datos_optpy/*.csv")
-    df = pd.concat((pd.read_csv(stockdata) for stock in stockdata), ignore_index=True)
-    df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
-    df_aj = df[(df["fecha"] >= start_date) & (df["fecha"] <= end_date)]
-    df_aj = stockdata['Cierre'] 
-    rendimiento = df_aj.pct_change() 
+    stockdata = glob.glob(path + '/*.csv')
+    df = pd.concat((pd.read_csv(stock) for stock in stockdata), ignore_index=True)
+    df["Fecha"] = pd.to_datetime(df["Fecha"], errors="coerce")
+    df_aj = df[(df["Fecha"] >= start_date) & (df["Fecha"] <= end_date)]
+    df_aj = df_aj[['Fecha', 'Cierre']] 
+    rendimiento = df_aj['Cierre'].pct_change() 
     media_rendimiento = rendimiento.mean()
     covmatrix = rendimiento.cov()
     
