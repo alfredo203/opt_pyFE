@@ -11,6 +11,8 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
+import glob
+
 
 
 #Definimos los parametros con los que trabajaremos y las especificaciones
@@ -34,9 +36,11 @@ tickers = ['GOOGL',
 'MARA'] 
  
 # Fecha de inicio del análisis
-start_date = "2024-05-26"  
+start_date = "2022-05-26"  
 # Fecha final del análisis
-end_date = "2025-05-26"   
+end_date = "2023-05-26"   
+
+path = 'C:/Users/david/Documents/Programación/datos_optpy'
 
 #MODULO DE ANALITICOS#
 
@@ -57,7 +61,7 @@ opt.bandas_bollinger(tickers, start_date, end_date)
 #MODULO DE OPTIMIZACION#
 
 #Se descargan y tratan los datos para simular el peso de los portafolios
-df_aj = opt.descargar_datos(tickers, start_date, end_date) 
+df_aj, rendimiento, media_rendimiento, covmatrix  = opt.getdata(path, tickers, start_date, end_date) 
 
 #se calcula el rendimiento logaritmico de las emisoras
 log_returns = opt.calcular_rendimientos_log(df_aj) ## @David esto crea Warning revisar

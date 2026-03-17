@@ -123,11 +123,18 @@ def proyeccion(tickers,start_date, end_date, window = 50):
 def getdata(path, tickers, start_date, end_date): 
     
     stockdata = glob.glob(path + '/*.csv')
+    
     df = pd.concat((pd.read_csv(stock) for stock in stockdata), ignore_index=True)
+
     df["Fecha"] = pd.to_datetime(df["Fecha"], errors="coerce")
     df_aj = df[(df["Fecha"] >= start_date) & (df["Fecha"] <= end_date)]
-    df_aj = df_aj[['Fecha', 'Cierre']] 
-    rendimiento = df_aj['Cierre'].pct_change() 
+    
+    if 'Ticker' in df_aj.columns:
+        df_aj = df_aj[df_aj['Ticker'].isin(tickers)]
+        
+    df_aj = df_aj.pivot(index = 'Fecha', columns = 'Ticker', values = 'Cierre')
+    
+    rendimiento = df_aj.pct_change() 
     media_rendimiento = rendimiento.mean()
     covmatrix = rendimiento.cov()
     
