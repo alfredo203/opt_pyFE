@@ -1,5 +1,7 @@
 
 # opt_pyFE
+# Favor de probar y hacer notas de lo que funciona o no funciona en el paquete
+# Python avanzados 2027-1 💪
 
 Este proyecto es una optimización de portafolio utilizando información extraída de yahoo finance.
 
@@ -18,7 +20,7 @@ Features
 
 * Gestiona el riesgo del portafolio cálculando el valor en riesgo (VaR) y el valor en riesgo condicional (CVaR) por medio del método histórico y por medio de simulaciones Montecarlo
 
-* Genera un resumen de los valores VaR y CVaR calculados, así como del desempeño del portafolio 
+* Genera un resumen de los valores VaR y CVaR calculados, así como del desempeño del portafolio
 
 Tutorial
 --------
@@ -205,7 +207,7 @@ end_date = dt.datetime.now()
 start_date = end_date - dt.timedelta(days=800)
 
 rendimiento, rendimiento_medio, covmatrix = getdata(tickers, start_date, end_date)
-rendimiento = rendimiento.dropna() #eliminamos los valores nulos 
+rendimiento = rendimiento.dropna() #eliminamos los valores nulos
 ```
 
 * desempeno: Devuelve 2 valor, el rendimiento y la desviación estandar. Requiere una lista de pesos por ticker (que deben sumar 1), la media de rendimiento, una matriz de covarianza y el periodo analizar expresado en días
@@ -216,7 +218,7 @@ peso /= np.sum(peso) #redondeamos los pesos para que sumen 1
 
 time = 100
 inversion_inicial = 10000
-rendimiento['portafolio'] = rendimiento.dot(peso) #dot calcula el producto 
+rendimiento['portafolio'] = rendimiento.dot(peso) #dot calcula el producto
 
 pRet, pStd = desempeno(peso, rendimiento_medio, covmatrix, time)
 ```
@@ -239,7 +241,7 @@ print(' historical CVaR 95th CI  :    ', round(inversion_inicial*hCVaR, 2))
 
 ```python
 mc_sims = 400 # numero de simulaciones
-T = 100 #periodo de tiempo en dias 
+T = 100 #periodo de tiempo en dias
 
 portfolio_sims, portResults = MonteCarlo(mc_sims, T, rendimiento_medio, peso, inversion_inicial, covmatrix)
 ```
@@ -323,7 +325,7 @@ Realizado por: David Gutiérrez
 yfinance importaba datos nulos o no descargaba la información solicitada. Este problema apareció después de no utilizar la libreria durante un periodo de tiempo prolongado e impedía el obtener cualqier tipo de dato, para cualquier periodo, de yfinance.
 
 Se detectó que yfinance había sido actualizada durante este periodo de tiempo, tras comprobar que ninguna otra alteranitva de sintaxis obtenía resultados diferentes se procedió a actualizar la libría de manera manual, por medio del comando: "pip install --upgrade yfinance"
-Este deberá ser ingresado en el Anaconda Prompt del equipo. 
+Este deberá ser ingresado en el Anaconda Prompt del equipo.
 
 A pesar de que la actulización fue instalada con éxito el problema persistió, por lo que procedimos a verificar si había algún problema con el estado de los permisos JSON. Por medio del siguiente código revisamos si yfinance estaba devolviendo datos o si el problema era de otra naturaleza:
 ```python
