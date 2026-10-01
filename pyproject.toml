@@ -4,60 +4,62 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opt_pyFE"
-version = "0.1.0"
-description = "Este proyecto es una optimización de portafolio utilizando información extraída de yahoo finance"
-readme = "README.rst"
+version = "0.2.0"
+description = "Paquete de optimización de portafolios, analítica técnica y gestión de riesgo financiero."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
 authors = [
-  {name = "Equipo Python FE"}
+  {name = "Equipo Python FE", email = "afredo.olguin@economia.unam.mx"}
 ]
 maintainers = [
-  {name = "Equipo Python FE"}
+  {name = "Equipo Python FE", email = "afredo.olguin@economia.unam.mx"}
 ]
 classifiers = [
-
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Office/Business :: Financial :: Investment",
 ]
-license = {text = "MIT license"}
 dependencies = [
-  "typer"
+  "numpy>=1.24.0",
+  "pandas>=2.0.0",
+  "yfinance>=0.2.30",
+  "scikit-learn>=1.2.0",
+  "matplotlib>=3.7.0",
+  "scipy>=1.10.0",
+  "typer>=0.9.0",
+  "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "coverage",  # testing
-    "mypy",  # linting
-    "pytest",  # testing
-    "ruff"  # linting
+  "pytest>=7.0",
+  "coverage",
+  "mypy",
+  "ruff",
+]
+nlp = [
+  "transformers>=4.30.0",
+  "torch>=2.0.0",
 ]
 
-[project.urls]
-
-bugs = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/issues"
-changelog = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/blob/master/changelog.md"
-homepage = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}"
+[project.scripts]
+opt-pyfe = "opt_pyFE.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.setuptools.package-data]
 "*" = ["*.*"]
 
-
-
-
-# Mypy
-# ----
-
-[tool.mypy]
-files = "."
-
-# Use strict defaults
-strict = true
-warn_unreachable = true
-warn_no_return = true
-
-[[tool.mypy.overrides]]
-# Don't require test functions to include types
-module = "tests.*"
-allow_untyped_defs = true
-disable_error_code = "attr-defined"
-
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+filterwarnings = [
+  "ignore::DeprecationWarning",
+  "ignore::FutureWarning",
+]

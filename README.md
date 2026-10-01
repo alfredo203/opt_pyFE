@@ -1,348 +1,249 @@
-
 # opt_pyFE
-# Favor de probar y hacer notas de lo que funciona o no funciona en el paquete
-# Python avanzados 2027-1 💪
 
-Este proyecto es una optimización de portafolio utilizando información extraída de yahoo finance.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python: 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 
-"Potencia tus inversiones con nuestro avanzado paquete de optimización de portafolio."  Nuestra herramienta, basada en algoritmos sofisticados, analiza tu perfil de riesgo y te ayuda a construir una cartera diversificada que maximice tus rendimientos y minimice tu exposición a pérdidas.  Con seguimiento en tiempo real y rebalanceos automáticos, tendrás la tranquilidad de saber que tu dinero está trabajando inteligentemente para ti. ¡Toma el control de tu futuro financiero hoy mismo!
+**opt_pyFE** es una librería de Python para análisis financiero cuantitativo, optimización de carteras bajo la Teoría Moderna de Portafolios (Markowitz), modelado de riesgo mediante Métodos Históricos y Simulación Monte Carlo, y analítica de sentimiento con procesamiento de lenguaje natural (NLP).
 
+---
 
+## Características Principales
 
-* Free software: MIT license
-* Documentation: https://opt-pyFE.readthedocs.io.
+* **Ingesta de Datos Financieros:** Descarga automatizada y homogeneización de precios históricos y rendimientos continuos o discretos vía Yahoo Finance (`yfinance`).
+* **Analítica Técnica:**
+  * Proyección de tendencia mediante regresión lineal con medias móviles configurables.
+  * Bandas de Bollinger para análisis de volatilidad y reversión a la media.
+* **Optimización de Portafolios:**
+  * Simulación estocástica multivariada de carteras.
+  * Identificación del portafolio óptimo (máximo Ratio de Sharpe) y de mínima volatilidad (mínima varianza).
+  * Evaluación de retorno esperado y volatilidad del portafolio en cualquier horizonte temporal.
+* **Gestión de Riesgo:**
+  * Cálculo de Valor en Riesgo (**VaR**) y Valor en Riesgo Condicional (**CVaR** / Expected Shortfall) por el método histórico.
+  * Simulación Monte Carlo multivariada con descomposición de Cholesky y regularización espectral robusta.
+  * Estimación de VaR y CVaR sobre las trayectorias proyectadas de Monte Carlo.
+  * Reporte tabular y resumido de métricas de riesgo.
+* **Procesamiento de Lenguaje Natural (NLP):**
+  * Clasificación de sentimiento en titulares financieros con modelos basados en Transformer (`FinancialBERT`).
+* **Línea de Comandos (CLI):** Comando `opt-pyfe` para optimizaciones rápidas directamente desde la terminal.
 
+---
 
-Features
---------
+## Instalación
 
-* Permite conocer el desempeño de portafolios especificos, por medio del cálculo de rendimientos y la desviación estandar de los tickers
-
-* Gestiona el riesgo del portafolio cálculando el valor en riesgo (VaR) y el valor en riesgo condicional (CVaR) por medio del método histórico y por medio de simulaciones Montecarlo
-
-* Genera un resumen de los valores VaR y CVaR calculados, así como del desempeño del portafolio
-
-Tutorial
---------
-* Función proyección
-```python
-def proyeccion(tickers, window = 50):
-    # Descargar datos del tickers actual
-    data = yf.download(tickers, start=start_date, end=end_date)
-
-    # Comprobar si hay datos suficientes
-    if not data.empty:
-        # Crear DataFrame y agregar columna de días
-        df_aj = pd.DataFrame(data)
-        df_aj['Día'] = np.arange(1, len(df_aj) + 1)
-
-        # Calcular la media móvil de los últimos 50 días
-        df_aj['MA_50'] = df_aj['Close'].rolling(window=window).mean()
-
-        # Variables independientes (Día) y dependientes (Precio de Close)
-        X = df_aj[['Día']]  # Días como variable independiente
-        y = df_aj['Close']  # Precio de cierre como variable dependiente
-```
-Convierte data en un DataFrame llamado df_aj.
-Crea una nueva columna Día que representa el número de día (1, 2, 3, ..., n
-Define las variables para el modelo de regresión: X: La variable independiente (los días). y: La variable dependiente (el precio de cierre).
-
-* regresión
-``` python
-# Crear el modelo de regresión lineal
-        regresion = LinearRegression()
-
-        # Entrenar el modelo
-        regresion.fit(X, y)
-
-        # Obtener la pendiente (coeficiente) y agregarla a la lista
-        pendientes = []
-        pendiente = regresion.coef_[0]
-        pendientes.append((tickers, pendiente))
-        print(f"Pendiente de {tickers}: {pendiente}")
-
-        # Hacer predicciones para los días de prueba
-        y_pred = regresion.predict(X)
-
-        # Generar gráfica
-        plt.figure(figsize=(10, 6))
-
-        # Gráfico de precios de cierre
-        plt.plot(df_aj['Día'], df_aj['Close'], color='blue', label='Precio de Cierre')
-
-        # Gráfico de la media móvil de 50 días
-        plt.plot(df_aj['Día'], df_aj['MA_50'], color='green', label='Media Móvil 50 días')
-
-        # Gráfico de la regresión lineal
-        plt.plot(df_aj['Día'], y_pred, color='red', label='Línea de Regresión')
-
-        plt.title(f'Regresión Lineal y Media Móvil para {tickers} (Precio de Cierre)')
-        plt.xlabel('Día')
-        plt.ylabel('Precio de Cierre')
-        plt.legend()
-        plt.grid(True)
-
-        # Mostrar la gráfica
-        plt.show()
-    else:
-        print(f"No se encontraron datos para {tickers}")
-    return pendientes
-```
-Se crea una instancia del modelo de regresión lineal de scikit-learn (LinearRegression()). Se ajusta el modelo con los datos de entrenamiento X (días) y y (precios de cierre). Se usa el modelo entrenado para hacer predicciones (y_pred), es decir, estimar los precios de cierre en función de los días.
-
-plt.figure(figsize=(10, 6)): Se define el tamaño de la figura.
-plt.plot(df_aj['Día'], df_aj['Close'], color='blue', label='Precio de Cierre'): Grafica la serie de precios de cierre en azul.
-plt.plot(df_aj['Día'], df_aj['MA_50'], color='green', label=f'Media Móvil {window} días'): Grafica la media móvil en verde.
-plt.plot(df_aj['Día'], y_pred, color='red', label='Regresión Lineal'): Grafica la regresión lineal en rojo.
-Título, etiquetas y leyenda: Se agregan título, etiquetas de ejes y leyenda para hacer la gráfica más comprensible.
-plt.grid(True): Activa la cuadrícula para mejorar la lectura de la gráfica. plt.show(): Muestra la gráfica.
-
-*Función calcular_rendimientos_log
-```python
-def calcular_rendimientos_log(df_aj):
-    # Calcula los rendimientos simples porcentuales
-    rendimiento = df_aj.pct_change()
-    # Convierte los rendimientos simples en rendimientos logarítmicos
-    log_returns = np.log(1 + rendimiento)
-    # Retorna los rendimientos logarítmicos
-    return log_returns
-```
-Usa pct_change(), que calcula el cambio porcentual entre cada período consecutivo de la serie de precios.
-Se transforma el rendimiento simple en rendimiento logarítmico usando la función np.log().
-Esta conversión es útil porque los rendimientos logarítmicos son aditivos en el tiempo, lo que facilita el cálculo de rendimientos acumulados.
-return log_returns: Devuelve los rendimientos logarítmicos como una nueva serie.
-
-* Función simular_portafolios
-```python
-def simular_portafolios(log_returns, num_portafolios=5000):
-    # Obtiene el número de activos en el portafolio
-    num_activos = log_returns.shape[1]
-    # Inicializa matrices para almacenar los pesos, rendimientos, volatilidades y ratios Sharpe
-    weight = np.zeros((num_portafolios, num_activos))
-    ReturnEsp = np.zeros(num_portafolios)
-    VolEsp = np.zeros(num_portafolios)
-    RadioSharpe = np.zeros(num_portafolios)
-
-    # Calcula la media y covarianza de los rendimientos logarítmicos
-    meanlogReturns = log_returns.mean()
-    Sigma = log_returns.cov()
-
-    # Simulación de los portafolios
-    for k in range(num_portafolios):
-        # Genera pesos aleatorios para los activos y los normaliza a 1
-        w = np.random.random(num_activos)
-        w /= np.sum(w)
-        # Almacena los pesos en la matriz correspondiente
-        weight[k, :] = w
-
-        # Calcula el rendimiento esperado del portafolio con los pesos aleatorios
-        ReturnEsp[k] = np.sum(meanlogReturns * w)
-        # Calcula la volatilidad esperada del portafolio
-        VolEsp[k] = np.sqrt(np.dot(w.T, np.dot(Sigma, w)))
-        # Calcula el Ratio Sharpe del portafolio
-        RadioSharpe[k] = ReturnEsp[k] / VolEsp[k]
-
-    # Retorna las matrices de pesos, rendimientos, volatilidades y ratios Sharpe
-    return weight, ReturnEsp, VolEsp, RadioSharpe
-```
-log_returns: DataFrame de Pandas con los rendimientos logarítmicos de los activos del portafolio.
-num_portafolios (opcional, por defecto 5000): Número de portafolios aleatorios a simular.
-Determina el número de activos a partir de la cantidad de columnas en log_returns.
-Inicializa matrices para almacenar pesos de los activos, rendimientos esperados, volatilidades y ratios de Sharpe.
-Calcula la media de los rendimientos logarítmicos (meanlogReturns) y la matriz de covarianza (Sigma).
-Genera num_portafolios portafolios con pesos aleatorios normalizados.
-Para cada portafolio: Calcula el rendimiento esperado como la suma ponderada de los rendimientos medios.
-Calcula la volatilidad esperada con la fórmula de varianza de portafolio.
-Calcula el ratio de Sharpe como la razón entre rendimiento esperado y volatilidad.
-Devuelve las matrices con los pesos, rendimientos, volatilidades y ratios de Sharpe.
-
-* Función encontrar_mejor_portafolio
-```python
-def encontrar_mejor_portafolio(weight, ReturnEsp, VolEsp, RadioSharpe):
-    # Encuentra el índice del portafolio con el mayor Ratio Sharpe
-    max_index = RadioSharpe.argmax()
-    # Obtiene los pesos, rendimiento, volatilidad y Ratio Sharpe del mejor portafolio
-    best_weights = weight[max_index, :]
-    return best_weights, ReturnEsp[max_index], VolEsp[max_index], RadioSharpe[max_index]
-```
-weight: Matriz de pesos de los activos en cada portafolio simulado.
-ReturnEsp: Vector con los rendimientos esperados de cada portafolio.
-VolEsp: Vector con las volatilidades esperadas de cada portafolio.
-RadioSharpe: Vector con los Ratios de Sharpe de cada portafolio.
-Encuentra el índice del portafolio con el mayor Ratio de Sharpe usando argmax().
-Extrae los pesos óptimos, rendimiento esperado, volatilidad y Ratio de Sharpe del mejor portafolio.
-Retorna estos valores como una tupla. Salida (return values) best_weights: Pesos del portafolio con el mejor Ratio de Sharpe.
-ReturnEsp[max_index]: Rendimiento esperado del mejor portafolio.
-VolEsp[max_index]: Volatilidad del mejor portafolio.
-RadioSharpe[max_index]: Ratio de Sharpe del mejor portafolio.
-
-* Funcion mostrar_resultados
-```python
-def mostrar_resultados(tickers, best_weights, retorno, volatilidad, sharpe_ratio):
-    # Muestra los pesos de los activos en el mejor portafolio
-    print("Mejores pesos del portafolio:")
-    for i, ticker in enumerate(tickers):
-        print(f"{ticker}: {best_weights[i] * 100:.2f}%")
-
-    # Muestra el rendimiento esperado, la volatilidad y el Ratio Sharpe del mejor portafolio
-    print(f"Retorno esperado del portafolio: {retorno:.4f}")
-    print(f"Volatilidad esperada del portafolio: {volatilidad:.4f}")
-    print(f"Ratio Sharpe máximo: {sharpe_ratio:.4f}")
-```
-tickers: Lista con los nombres o símbolos de los activos en el portafolio.
-best_weights: Vector con los pesos asignados a cada activo en el mejor portafolio.
-retorno: Rendimiento esperado del mejor portafolio.
-volatilidad: Volatilidad esperada del mejor portafolio.
-sharpe_ratio: Ratio de Sharpe del mejor portafolio.
-Imprime los pesos de cada activo en el portafolio en formato porcentual.
-Muestra los valores clave del portafolio: Rendimiento esperado (esperanza de retorno del portafolio).
-Volatilidad esperada (riesgo medido como desviación estándar).
-Ratio de Sharpe (rendimiento ajustado al riesgo).
-
-* get data: Recupera datos historicos de las emisoras alojadas en el registro de Yahoo Finance. Devuelve una tabla con la información solicitada, una tabla con los rendimientos de las emisoras, la media de los rendimientos y una matriz de covarianza. Requiere una lista con los tickers de las emisoras, así como fechas de inicio y final del periodo a trabajar
-```python
-tickers = ["GOOG","BKNG","META", "AAPL","TSLA","^IRX"] #creamos un portafolio
-
-end_date = dt.datetime.now()
-start_date = end_date - dt.timedelta(days=800)
-
-rendimiento, rendimiento_medio, covmatrix = getdata(tickers, start_date, end_date)
-rendimiento = rendimiento.dropna() #eliminamos los valores nulos
+### Instalación estándar:
+Clona el repositorio e instala en modo editable o directo:
+```bash
+git clone https://github.com/alfredo203/opt_pyFE.git
+cd opt_pyFE
+pip install .
 ```
 
-* desempeno: Devuelve 2 valor, el rendimiento y la desviación estandar. Requiere una lista de pesos por ticker (que deben sumar 1), la media de rendimiento, una matriz de covarianza y el periodo analizar expresado en días
-
-```python
-peso = np.array([0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666])
-peso /= np.sum(peso) #redondeamos los pesos para que sumen 1
-
-time = 100
-inversion_inicial = 10000
-rendimiento['portafolio'] = rendimiento.dot(peso) #dot calcula el producto
-
-pRet, pStd = desempeno(peso, rendimiento_medio, covmatrix, time)
+O para desarrollo:
+```bash
+pip install -e .
 ```
 
-* historicalVar: Mide el nivel máximo de perdidas que se espera tener con nuestros portafolio, basado en el nivel de precios historicos. Regresa el valor en riesgo historico e imprime su valor en la consola. Requiere el cuadro de rendimientos y un nivel de significancia, alpha
-
-```python
-hVaR = -historicalVar(rendimiento['portafolio'], alpha=5)*np.sqrt(time)
-print(' historical VaR 95th CI   :    ', round(inversion_inicial*hVaR, 2))
+### Con soporte para NLP (FinancialBERT):
+```bash
+pip install ".[nlp]"
 ```
 
-* historicalCVAr: Mide el nivel máximo de perdidas que superan el valor del VaR historico, refleja el nivel de perdidas esperado en el caso más extremo. Regresa el valor en riesgo condicional historico e imprime el valor en la consola. Requiere el cuadro de rendimientos y un nivel de significancia, alpha
+---
 
-```python
-hCVaR = -historicalCVar(rendimiento['portafolio'], alpha=5)*np.sqrt(time)
-print(' historical CVaR 95th CI  :    ', round(inversion_inicial*hCVaR, 2))
+## Estructura del Proyecto
+
+```text
+opt_pyFE/
+├── pyproject.toml               # Configuración moderna de empaquetado (PEP 518/621)
+├── README.md                    # Documentación principal
+├── src/
+│   └── opt_pyFE/
+│       ├── __init__.py          # API pública limpia y controlada (__all__)
+│       ├── data.py              # Descarga de datos y rendimientos
+│       ├── analytics.py         # Medias móviles, regresión y Bollinger
+│       ├── portfolio.py         # Simulación de portafolios y Sharpe
+│       ├── risk.py              # VaR, CVaR y simulación Monte Carlo
+│       ├── sentiment.py         # Análisis de sentimiento con FinancialBERT
+│       ├── cli.py               # Herramienta de línea de comandos (Typer/Rich)
+│       └── opt_pyFE.py          # Módulo unificado para retrocompatibilidad
+├── examples/
+│   ├── tutorial_opt_pyFE.py     # Tutorial completo ejecutable de inicio a fin
+│   └── bert_sentiment_demo.py   # Demo de análisis de sentimiento
+└── tests/                       # Suite de pruebas unitarias con pytest
+    ├── test_data.py
+    ├── test_analytics.py
+    ├── test_portfolio.py
+    ├── test_risk.py
+    └── test_imports.py
 ```
 
-* MonteCarlo: Ejecuta una simulación Montecarlo, necesaria para calcular el Var y CVaR por Montecarlo. Requiere el número de simulaciones a ejecutar, el numero de días a simular, la media de rendimiento, la lista de pesos, el valor de nuestro portafolio inicial y la matríz de covarianza
+---
 
-```python
-mc_sims = 400 # numero de simulaciones
-T = 100 #periodo de tiempo en dias
+## Guía Rápida / Tutorial
 
-portfolio_sims, portResults = MonteCarlo(mc_sims, T, rendimiento_medio, peso, inversion_inicial, covmatrix)
+Puedes ejecutar el script interactivo completo con:
+```bash
+python examples/tutorial_opt_pyFE.py
 ```
 
-* mcVaR: Mide el nivel máximo de perdidas que se espera tener con nuestros portafolio, basado en el nivel de precios obtenidos en la simulación Montecarlo. Regresa el valor en riesgo por Montecarlo e imprime su valor en la consola. Requiere el cuadro de rendimientos y un nivel de significancia, alpha
+O utilizar las funciones directamente en tus propios scripts o notebooks:
 
+### 1. Ingesta de datos y cálculo de rendimientos
 ```python
-MCVaR = inversion_inicial - mcVaR(portResults, alpha=5)
-print(" MC VaR  95th CI          :    ", round(MCVaR, 2))
+import opt_pyFE as opt
+
+tickers = ["AAPL", "MSFT", "GOOGL", "AMZN"]
+start_date = "2023-01-01"
+end_date = "2025-01-01"
+
+# Descarga de precios de cierre
+precios = opt.descargar_datos(tickers, start_date=start_date, end_date=end_date)
+
+# Rendimientos logarítmicos
+rendimientos_log = opt.calcular_rendimientos_log(precios)
+
+# Rendimientos simples, media diaria y matriz de covarianza
+rendimientos, media_rend, covmatrix = opt.getdata(tickers, start=start_date, end=end_date)
 ```
 
-* mcCVaR: Mide el nivel máximo de perdidas que superan el valor del VaR Montecarlo, refleja el nivel de perdidas esperado en el caso más extremo. Regresa el valor en riesgo condicional por Montecarlo e imprime el valor en la consola. Requiere el cuadro de rendimientos y un nivel de significancia, alpha
-
+### 2. Analítica técnica (Regresión y Bandas de Bollinger)
 ```python
-MCCVaR = inversion_inicial - mcCVaR(portResults, alpha=5)
-print(" MC CVaR 95th CI          :    ", round(MCCVaR, 2))
+# Proyección con regresión lineal y media móvil (sin bloquear ejecución obligada)
+pendientes = opt.proyeccion("AAPL", start_date=start_date, end_date=end_date, window=50, plot=True)
+print("Pendiente obtenida:", pendientes)
+
+# Bandas de Bollinger
+datos_bollinger = opt.bandas_bollinger(["AAPL", "MSFT"], start_date=start_date, end_date=end_date, window=20, plot=True)
 ```
 
-* resum: Presenta un resumen de los valores VaR y CVar calculados. Requiere de la variable inversion inicial, hVar, hCVar, McVar, McCVar y el rendimiento
-
+### 3. Simulación y optimización de portafolios
 ```python
-resum(inversion_inicial, inversion_inicial, hVaR, hCVaR, MCVaR, MCCVaR, pRet)
+# Simular 5,000 portafolios aleatorios
+weights, ret_esp, vol_esp, sharpe = opt.simular_portafolios(rendimientos_log, num_portafolios=5000)
+
+# Encontrar el portafolio de Máximo Ratio de Sharpe
+best_weights, ret_opt, vol_opt, max_sharpe = opt.encontrar_mejor_portafolio(
+    weights, ret_esp, vol_esp, sharpe
+)
+opt.mostrar_resultados(tickers, best_weights, ret_opt, vol_opt, max_sharpe)
+
+# Encontrar el portafolio de Mínima Varianza
+min_w, min_ret, min_vol, min_s = opt.encontrar_minima_varianza(
+    weights, ret_esp, vol_esp, sharpe
+)
 ```
 
-# Tutorial Analíticos: Proyección de Acciones con Python
-
-## 1. Importar las librerías
+### 4. Medición de Riesgo (VaR y CVaR)
 ```python
-import yfinance as yf
-import pandas as pd
 import numpy as np
-from sklearn.linear_model import LinearRegression
-import matplotlib.pyplot as plt
+
+time_horizon = 100            # Horizonte a 100 días
+inversion_inicial = 100_000.0 # $100,000 USD
+
+# Rendimiento del portafolio combinado
+ret_portafolio = rendimientos.dot(best_weights)
+
+# 1. VaR y CVaR Histórico al 95% de confianza (alpha=5)
+h_var = -opt.historical_var(ret_portafolio, alpha=5.0) * np.sqrt(time_horizon)
+h_cvar = -opt.historical_cvar(ret_portafolio, alpha=5.0) * np.sqrt(time_horizon)
+
+# 2. Simulación Monte Carlo
+portfolio_sims, port_results = opt.monte_carlo_sim(
+    mc_sims=1000,
+    T=time_horizon,
+    media_rendimiento=media_rend,
+    peso=best_weights,
+    initialPortfolio=inversion_inicial,
+    covmatrix=covmatrix,
+    plot=False,
+)
+
+# VaR y CVaR por Monte Carlo
+mc_var_val = inversion_inicial - opt.mc_var(port_results, alpha=5.0)
+mc_cvar_val = inversion_inicial - opt.mc_cvar(port_results, alpha=5.0)
+
+# Desempeño estimado
+p_ret, p_std = opt.desempeno(best_weights, media_rend, covmatrix, time=time_horizon)
+
+# Resumen estructurado
+opt.resumen_riesgo(
+    inversion_inicial=inversion_inicial,
+    initialPortfolio=inversion_inicial,
+    hVaR=h_var,
+    hCVaR=h_cvar,
+    MCVaR=mc_var_val,
+    MCCVaR=mc_cvar_val,
+    pRet=p_ret,
+)
 ```
 
-##  2. Definir el rango de fechas
+### 5. Análisis de Sentimiento Financiero (NLP)
 ```python
-Copy
-start_date = '2024-01-01'
-end_date = '2024-09-23'
+from opt_pyFE import analizar_sentimiento
+
+noticias = [
+    "Apple beats quarterly revenue expectations driven by iPhone sales.",
+    "Central bank unexpectedly raises interest rates sparking market sell-off."
+]
+
+resultados = analizar_sentimiento(noticias, forzar_binario=True)
+print(resultados)
 ```
 
-## 3. Función `proyeccion`
-La función realiza:
-- **Descarga de datos**:
-  - Usa `yfinance` para obtener precios históricos.
-  - Filtra por `start_date` y `end_date`.
-- **Cálculos**:
-  - Media móvil (default: 50 días).
-  - Regresión lineal con `scikit-learn`.
-- **Gráficos**:
-  - Muestra: precio de cierre, media móvil y tendencia.
+---
 
-## 4. Ejemplo de uso
-Analizar múltiples tickers:
-```python
-# Definir los tickers a analizar
-tickers = ['NVDA', 'AAPL']
+## Uso desde la Terminal (CLI)
 
-# Bucle para procesar cada ticker
-for ticker in tickers:
-    proyeccion(ticker)
+El paquete incluye una interfaz de comandos `opt-pyfe`:
+```bash
+# Ver versión
+opt-pyfe version
+
+# Optimizar portafolio directamente en la terminal
+opt-pyfe optimize AAPL MSFT NVDA GOOGL --start 2023-01-01 --end 2024-01-01 --sims 4000
 ```
 
-Cambiar la ventana de la media móvil (ej: 20 días):
-```python
-Copy
-for ticker in tickers:
-    proyeccion(ticker, window=20)  # Media móvil de 20 días
+---
+
+## Tabla de Equivalencias y Retrocompatibilidad
+
+Para garantizar que el código previo de los alumnos no se rompa, se mantienen alias automáticos entre los nombres clásicos y los nombres estándar (PEP 8):
+
+| Función Estándar (PEP 8) | Alias Retrocompatible | Descripción |
+| :--- | :--- | :--- |
+| `get_data(...)` | `getdata(...)` | Descarga de datos y covarianzas |
+| `bollinger_bands(...)` | `bandas_bollinger(...)` | Bandas de Bollinger |
+| `simulate_portfolios(...)` | `simular_portafolios(...)`| Simulación Monte Carlo de pesos |
+| `portfolio_performance(...)` | `desempeno(...)` | Rendimiento y riesgo proyectado |
+| `historical_var(...)` | `historicalVar(...)` | VaR histórico |
+| `historical_cvar(...)` | `historicalCVar(...)` | CVaR histórico |
+| `monte_carlo_sim(...)` | `MonteCarlo(...)` | Simulación Monte Carlo multivariada |
+| `mc_var(...)` | `mcVaR(...)` | VaR de Monte Carlo |
+| `mc_cvar(...)` | `mcCVaR(...)` | CVaR de Monte Carlo |
+| `resumen_riesgo(...)` | `resum(...)` | Resumen de métricas de riesgo |
+| `analyze_sentiment(...)` | `analizar_sentimiento(...)`| Clasificación FinancialBERT |
+
+---
+
+## Ejecución de Pruebas Unitarias
+
+Para ejecutar la batería completa de pruebas:
+```bash
+pytest -v
 ```
 
+---
 
-Troubleshooting
---------
+## Solución de Problemas Comunes (Troubleshooting)
 
-* Problema con descarga de datos de yfinanca
-Fecha: 21/02/2025
-Versión:
-Realizado por: David Gutiérrez
+### Límites de solicitudes en Yahoo Finance (`Too Many Requests`):
+Si `yfinance` responde con errores de rate limiting o devuelve `DataFrame` vacío:
+1. Actualiza `yfinance`: `pip install --upgrade yfinance`
+2. Si realizas muchas peticiones repetidas, agrega pausas (`time.sleep`) o prueba utilizando una VPN o red distinta.
+3. Asegúrate de pasar fechas con formato válido `YYYY-MM-DD`.
 
-yfinance importaba datos nulos o no descargaba la información solicitada. Este problema apareció después de no utilizar la libreria durante un periodo de tiempo prolongado e impedía el obtener cualqier tipo de dato, para cualquier periodo, de yfinance.
+---
 
-Se detectó que yfinance había sido actualizada durante este periodo de tiempo, tras comprobar que ninguna otra alteranitva de sintaxis obtenía resultados diferentes se procedió a actualizar la libría de manera manual, por medio del comando: "pip install --upgrade yfinance"
-Este deberá ser ingresado en el Anaconda Prompt del equipo.
+## Licencia
 
-A pesar de que la actulización fue instalada con éxito el problema persistió, por lo que procedimos a verificar si había algún problema con el estado de los permisos JSON. Por medio del siguiente código revisamos si yfinance estaba devolviendo datos o si el problema era de otra naturaleza:
-```python
-import requests
-
-url = "https://query1.finance.yahoo.com/v8/finance/chart/MSFT"
-response = requests.get(url)
-print(response.text)  # If empty or malformed, Yahoo API might be down
-```
-
-La respuesta del programa fue: "Edge: Too Many Requests". Esto nos indica que yfinnace está bloqueando nuestra dirección IP de manera temporal debido a un alto número de solicitudes enviadas.
-La solución a este problema fue cambiar de red. Aunque, de ser posible, reiniciar la red o usar una VPN podrían funcionar en este tipo de casos.
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+Distribuido bajo la Licencia **MIT**. Consulta el archivo `LICENSE` para más información.
