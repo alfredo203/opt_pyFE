@@ -1,7 +1,7 @@
 """Top-level package for opt_pyFE."""
 
 __author__ = "Equipo Python FE"
-__email__ = "afredo.olguin@economia.unam.mx"
+__email__ = "alfredo.olguin@economia.unam.mx"
 __version__ = "0.2.0"
 
 from .data import (

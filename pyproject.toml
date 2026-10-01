@@ -8,16 +8,34 @@ version = "0.2.0"
 description = "Paquete de optimización de portafolios, analítica técnica y gestión de riesgo financiero."
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
-  {name = "Equipo Python FE", email = "afredo.olguin@economia.unam.mx"}
+  {name = "Equipo Python FE", email = "alfredo.olguin@economia.unam.mx"}
 ]
 maintainers = [
-  {name = "Equipo Python FE", email = "afredo.olguin@economia.unam.mx"}
+  {name = "Equipo Python FE", email = "alfredo.olguin@economia.unam.mx"}
+]
+keywords = [
+  "finance",
+  "portfolio-optimization",
+  "markowitz",
+  "var",
+  "cvar",
+  "monte-carlo",
+  "quantitative-finance",
+  "yfinance",
+  "financial-analytics",
 ]
 classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Operating System :: OS Independent",
   "Topic :: Office/Business :: Financial :: Investment",
 ]
@@ -38,11 +56,19 @@ dev = [
   "coverage",
   "mypy",
   "ruff",
+  "build",
+  "twine",
 ]
 nlp = [
   "transformers>=4.30.0",
   "torch>=2.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/alfredo203/opt_pyFE"
+Repository = "https://github.com/alfredo203/opt_pyFE"
+"Bug Tracker" = "https://github.com/alfredo203/opt_pyFE/issues"
+Documentation = "https://github.com/alfredo203/opt_pyFE#readme"
 
 [project.scripts]
 opt-pyfe = "opt_pyFE.cli:main"

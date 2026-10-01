@@ -5,9 +5,12 @@ Credits
 Development Lead
 ----------------
 
-* Equipo Python FE <>
+* Equipo Python FE <alfredo.olguin@economia.unam.mx>
 
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Alfredo Olguín
+* David Gutiérrez
+* Rey David
+* Ana

@@ -1,7 +1,8 @@
 # opt_pyFE
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PyPI version](https://img.shields.io/pypi/v/opt_pyFE.svg)](https://pypi.org/project/opt_pyFE/)
 [![Python: 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **opt_pyFE** es una librería de Python para análisis financiero cuantitativo, optimización de carteras bajo la Teoría Moderna de Portafolios (Markowitz), modelado de riesgo mediante Métodos Históricos y Simulación Monte Carlo, y analítica de sentimiento con procesamiento de lenguaje natural (NLP).
 
@@ -30,22 +31,23 @@
 
 ## Instalación
 
-### Instalación estándar:
-Clona el repositorio e instala en modo editable o directo:
+### Instalación vía PyPI (Recomendado):
+Una vez publicado en PyPI, instala directamente con:
+```bash
+pip install opt_pyFE
+```
+*(o alternativamente `pip install opt-pyfe`)*
+
+Con soporte para procesamiento de lenguaje natural (NLP / FinancialBERT):
+```bash
+pip install "opt_pyFE[nlp]"
+```
+
+### Instalación local desde el código fuente (Desarrollo):
 ```bash
 git clone https://github.com/alfredo203/opt_pyFE.git
 cd opt_pyFE
-pip install .
-```
-
-O para desarrollo:
-```bash
-pip install -e .
-```
-
-### Con soporte para NLP (FinancialBERT):
-```bash
-pip install ".[nlp]"
+pip install -e ".[dev]"
 ```
 
 ---
@@ -54,27 +56,32 @@ pip install ".[nlp]"
 
 ```text
 opt_pyFE/
-├── pyproject.toml               # Configuración moderna de empaquetado (PEP 518/621)
-├── README.md                    # Documentación principal
+├── .github/
+│   └── workflows/
+│       └── publish.yml        # Publicación automatizada a PyPI vía GitHub Actions
+├── pyproject.toml             # Configuración moderna de empaquetado (PEP 518/621)
+├── MANIFEST.in                # Manifiesto de archivos fuente para distribución
+├── README.md                  # Documentación principal
 ├── src/
 │   └── opt_pyFE/
-│       ├── __init__.py          # API pública limpia y controlada (__all__)
-│       ├── data.py              # Descarga de datos y rendimientos
-│       ├── analytics.py         # Medias móviles, regresión y Bollinger
-│       ├── portfolio.py         # Simulación de portafolios y Sharpe
-│       ├── risk.py              # VaR, CVaR y simulación Monte Carlo
-│       ├── sentiment.py         # Análisis de sentimiento con FinancialBERT
-│       ├── cli.py               # Herramienta de línea de comandos (Typer/Rich)
-│       └── opt_pyFE.py          # Módulo unificado para retrocompatibilidad
+│       ├── __init__.py        # API pública limpia y controlada (__all__)
+│       ├── data.py            # Descarga de datos y rendimientos
+│       ├── analytics.py       # Medias móviles, regresión y Bollinger
+│       ├── portfolio.py       # Simulación de portafolios y Sharpe
+│       ├── risk.py            # VaR, CVaR y simulación Monte Carlo
+│       ├── sentiment.py       # Análisis de sentimiento con FinancialBERT
+│       ├── cli.py             # Herramienta de línea de comandos (Typer/Rich)
+│       └── opt_pyFE.py        # Módulo unificado para retrocompatibilidad
 ├── examples/
-│   ├── tutorial_opt_pyFE.py     # Tutorial completo ejecutable de inicio a fin
-│   └── bert_sentiment_demo.py   # Demo de análisis de sentimiento
-└── tests/                       # Suite de pruebas unitarias con pytest
+│   ├── tutorial_opt_pyFE.py   # Tutorial completo ejecutable de inicio a fin
+│   └── bert_sentiment_demo.py # Demo interactiva de análisis de sentimiento
+└── tests/                     # Suite completa de pruebas unitarias (pytest)
     ├── test_data.py
     ├── test_analytics.py
     ├── test_portfolio.py
     ├── test_risk.py
-    └── test_imports.py
+    ├── test_imports.py
+    └── test_opt_pyFE.py
 ```
 
 ---
@@ -108,7 +115,7 @@ rendimientos, media_rend, covmatrix = opt.getdata(tickers, start=start_date, end
 
 ### 2. Analítica técnica (Regresión y Bandas de Bollinger)
 ```python
-# Proyección con regresión lineal y media móvil (sin bloquear ejecución obligada)
+# Proyección con regresión lineal y media móvil
 pendientes = opt.proyeccion("AAPL", start_date=start_date, end_date=end_date, window=50, plot=True)
 print("Pendiente obtenida:", pendientes)
 
@@ -205,9 +212,67 @@ opt-pyfe optimize AAPL MSFT NVDA GOOGL --start 2023-01-01 --end 2024-01-01 --sim
 
 ---
 
+## Publicación en PyPI (Guía Paso a Paso)
+
+El paquete se encuentra empaquetado bajo los estándares modernos de Python (**PEP 517 / PEP 518 / PEP 621** con `pyproject.toml`).
+
+### Paso 1: Instalar herramientas de compilación
+Asegúrate de contar con `build` y `twine`:
+```bash
+pip install --upgrade build twine
+```
+
+### Paso 2: Limpiar artefactos previos y compilar la distribución
+Genera el paquete de código fuente (`.tar.gz`) y el archivo binario (`.whl`):
+```bash
+python -m build
+```
+Los archivos compilados quedarán almacenados en la carpeta `dist/`.
+
+### Paso 3: Validar la integridad del paquete
+Verifica que los metadatos y el README cumplan las especificaciones de PyPI:
+```bash
+twine check dist/*
+```
+*(Debe reportar `PASSED` en todos los archivos).*
+
+### Paso 4 (Opcional pero recomendado): Probar subida en TestPyPI
+Para verificar que el registro sea exitoso sin afectar la versión de producción:
+1. Crea una cuenta en [TestPyPI](https://test.pypi.org/) y genera un **API Token**.
+2. Sube la distribución a TestPyPI:
+   ```bash
+   twine upload --repository testpypi dist/*
+   ```
+   * En usuario ingresa: `__token__`
+   * En contraseña ingresa el token con prefijo: `pypi-...`
+3. Comprueba la instalación desde TestPyPI:
+   ```bash
+   pip install --index-url https://test.pypi.org/simple/ --no-deps opt_pyFE
+   ```
+
+### Paso 5: Publicación oficial en PyPI (Producción)
+1. Crea una cuenta en [PyPI oficial](https://pypi.org/) y activa autenticación de dos factores (2FA).
+2. Genera un **API Token** en *Account Settings* > *API Tokens*.
+3. Sube los archivos a PyPI:
+   ```bash
+   twine upload dist/*
+   ```
+   * En usuario ingresa: `__token__`
+   * En contraseña pega tu token: `pypi-...`
+
+¡Listo! A partir de ese momento, cualquier persona en el mundo podrá instalar la librería con `pip install opt_pyFE`.
+
+### Paso 6: Publicación automatizada mediante GitHub Actions (Opcional)
+El repositorio ya incluye el workflow [`.github/workflows/publish.yml`](.github/workflows/publish.yml). Para publicar automáticamente:
+1. Ve a la configuración de tu repositorio en PyPI y habilita **Trusted Publishing** vinculando `alfredo203/opt_pyFE`.
+2. O bien agrega el secreto `PYPI_API_TOKEN` en tu repositorio de GitHub (*Settings > Secrets and variables > Actions*).
+3. Cada vez que crees un **Release** en GitHub, el paquete se compilará, correrá los tests y se publicará en PyPI de forma 100% desatendida.
+
+---
+
 ## Tabla de Equivalencias y Retrocompatibilidad
 
-Para garantizar que el código previo de los alumnos no se rompa, se mantienen alias automáticos entre los nombres clásicos y los nombres estándar (PEP 8):
+Para garantizar que el código previo no se rompa, se mantienen alias automáticos entre los nombres clásicos y los nombres estándar (PEP 8):
 
 | Función Estándar (PEP 8) | Alias Retrocompatible | Descripción |
 | :--- | :--- | :--- |
