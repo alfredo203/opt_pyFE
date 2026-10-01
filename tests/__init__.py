@@ -1,1 +1,1 @@
-"""Unit test package for opt_pyFE."""
+"""Unit test package for trading_unam."""

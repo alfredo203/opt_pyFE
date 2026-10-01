@@ -1,5 +1,6 @@
 """Pruebas de integridad de importaciones y retrocompatibilidad de nombres."""
 
+import trading_unam
 import opt_pyFE
 
 
@@ -42,18 +43,19 @@ def test_public_api_exports():
     ]
 
     for fn_name in expected_functions:
-        assert hasattr(opt_pyFE, fn_name), f"Falta la función {fn_name} en la API pública"
+        assert hasattr(trading_unam, fn_name), f"Falta la función {fn_name} en la API pública de trading_unam"
+        assert hasattr(opt_pyFE, fn_name), f"Falta la función {fn_name} en el alias opt_pyFE"
 
 
 def test_alias_equivalence():
-    assert opt_pyFE.getdata is opt_pyFE.get_data
-    assert opt_pyFE.bandas_bollinger is opt_pyFE.bollinger_bands
-    assert opt_pyFE.simular_portafolios is opt_pyFE.simulate_portfolios
-    assert opt_pyFE.desempeno is opt_pyFE.portfolio_performance
-    assert opt_pyFE.historicalVar is opt_pyFE.historical_var
-    assert opt_pyFE.historicalCVar is opt_pyFE.historical_cvar
-    assert opt_pyFE.MonteCarlo is opt_pyFE.monte_carlo_sim
-    assert opt_pyFE.mcVaR is opt_pyFE.mc_var
-    assert opt_pyFE.mcCVaR is opt_pyFE.mc_cvar
-    assert opt_pyFE.resum is opt_pyFE.resumen_riesgo
-    assert opt_pyFE.analizar_sentimiento is opt_pyFE.analyze_sentiment
+    assert trading_unam.getdata is trading_unam.get_data
+    assert trading_unam.bandas_bollinger is trading_unam.bollinger_bands
+    assert trading_unam.simular_portafolios is trading_unam.simulate_portfolios
+    assert trading_unam.desempeno is trading_unam.portfolio_performance
+    assert trading_unam.historicalVar is trading_unam.historical_var
+    assert trading_unam.historicalCVar is trading_unam.historical_cvar
+    assert trading_unam.MonteCarlo is trading_unam.monte_carlo_sim
+    assert trading_unam.mcVaR is trading_unam.mc_var
+    assert trading_unam.mcCVaR is trading_unam.mc_cvar
+    assert trading_unam.resum is trading_unam.resumen_riesgo
+    assert trading_unam.analizar_sentimiento is trading_unam.analyze_sentiment

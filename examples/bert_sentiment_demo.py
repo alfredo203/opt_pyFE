@@ -1,13 +1,13 @@
 """Script de demostración para el análisis de sentimiento financiero con FinancialBERT.
 
 Requiere la instalación previa de transformers y torch:
-    pip install opt_pyFE[nlp]
+    pip install "trading_unam[nlp]"
     o
     pip install transformers torch
 """
 
 import sys
-from opt_pyFE import analizar_sentimiento
+from trading_unam import analizar_sentimiento
 
 
 def main():

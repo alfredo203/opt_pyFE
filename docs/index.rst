@@ -1,5 +1,5 @@
-Welcome to opt_pyFE's documentation!
-======================================
+Welcome to Trading UNAM's documentation!
+========================================
 
 .. toctree::
    :maxdepth: 2

@@ -5,6 +5,7 @@ include LICENSE
 include README.md
 include pyproject.toml
 
+recursive-include src/trading_unam *
 recursive-include src/opt_pyFE *
 recursive-include tests *
 recursive-exclude * __pycache__

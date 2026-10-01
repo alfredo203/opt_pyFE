@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "opt_pyFE"
+name = "trading_unam"
 version = "0.2.0"
-description = "Paquete de optimización de portafolios, analítica técnica y gestión de riesgo financiero."
+description = "Trading UNAM: Paquete de optimización de portafolios, analítica técnica y gestión de riesgo financiero."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
@@ -26,6 +26,7 @@ keywords = [
   "quantitative-finance",
   "yfinance",
   "financial-analytics",
+  "trading-unam",
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -65,13 +66,14 @@ nlp = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/alfredo203/opt_pyFE"
-Repository = "https://github.com/alfredo203/opt_pyFE"
-"Bug Tracker" = "https://github.com/alfredo203/opt_pyFE/issues"
-Documentation = "https://github.com/alfredo203/opt_pyFE#readme"
+Homepage = "https://github.com/alfredo203/trading_unam"
+Repository = "https://github.com/alfredo203/trading_unam"
+"Bug Tracker" = "https://github.com/alfredo203/trading_unam/issues"
+Documentation = "https://github.com/alfredo203/trading_unam#readme"
 
 [project.scripts]
-opt-pyfe = "opt_pyFE.cli:main"
+trading-unam = "trading_unam.cli:main"
+opt-pyfe = "trading_unam.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

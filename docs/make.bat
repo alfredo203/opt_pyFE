@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=opt_pyFE
+set SPHINXPROJ=trading_unam
 
 if "%1" == "" goto help
 

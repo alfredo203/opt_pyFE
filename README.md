@@ -1,10 +1,12 @@
-# opt_pyFE
+# Trading UNAM
 
-[![PyPI version](https://img.shields.io/pypi/v/opt_pyFE.svg)](https://pypi.org/project/opt_pyFE/)
+[![PyPI version](https://img.shields.io/pypi/v/trading_unam.svg)](https://pypi.org/project/trading_unam/)
 [![Python: 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**opt_pyFE** es una librería de Python para análisis financiero cuantitativo, optimización de carteras bajo la Teoría Moderna de Portafolios (Markowitz), modelado de riesgo mediante Métodos Históricos y Simulación Monte Carlo, y analítica de sentimiento con procesamiento de lenguaje natural (NLP).
+**Trading UNAM** (`trading_unam`) es una librería de Python para análisis financiero cuantitativo, optimización de carteras bajo la Teoría Moderna de Portafolios (Markowitz), modelado de riesgo mediante Métodos Históricos y Simulación Monte Carlo, y analítica de sentimiento con procesamiento de lenguaje natural (NLP).
+
+> **Nota de compatibilidad:** Para proyectos que utilizaban el nombre previo del paquete (`opt_pyFE`), se mantiene total compatibilidad retrospectiva mediante alias (`import opt_pyFE` o el comando `opt-pyfe`).
 
 ---
 
@@ -25,7 +27,7 @@
   * Reporte tabular y resumido de métricas de riesgo.
 * **Procesamiento de Lenguaje Natural (NLP):**
   * Clasificación de sentimiento en titulares financieros con modelos basados en Transformer (`FinancialBERT`).
-* **Línea de Comandos (CLI):** Comando `opt-pyfe` para optimizaciones rápidas directamente desde la terminal.
+* **Línea de Comandos (CLI):** Comando `trading-unam` (o `opt-pyfe`) para optimizaciones rápidas directamente desde la terminal.
 
 ---
 
@@ -34,19 +36,18 @@
 ### Instalación vía PyPI (Recomendado):
 Una vez publicado en PyPI, instala directamente con:
 ```bash
-pip install opt_pyFE
+pip install trading_unam
 ```
-*(o alternativamente `pip install opt-pyfe`)*
 
 Con soporte para procesamiento de lenguaje natural (NLP / FinancialBERT):
 ```bash
-pip install "opt_pyFE[nlp]"
+pip install "trading_unam[nlp]"
 ```
 
 ### Instalación local desde el código fuente (Desarrollo):
 ```bash
-git clone https://github.com/alfredo203/opt_pyFE.git
-cd opt_pyFE
+git clone https://github.com/alfredo203/trading_unam.git
+cd trading_unam
 pip install -e ".[dev]"
 ```
 
@@ -55,7 +56,7 @@ pip install -e ".[dev]"
 ## Estructura del Proyecto
 
 ```text
-opt_pyFE/
+trading_unam/
 ├── .github/
 │   └── workflows/
 │       └── publish.yml        # Publicación automatizada a PyPI vía GitHub Actions
@@ -63,17 +64,18 @@ opt_pyFE/
 ├── MANIFEST.in                # Manifiesto de archivos fuente para distribución
 ├── README.md                  # Documentación principal
 ├── src/
-│   └── opt_pyFE/
-│       ├── __init__.py        # API pública limpia y controlada (__all__)
-│       ├── data.py            # Descarga de datos y rendimientos
-│       ├── analytics.py       # Medias móviles, regresión y Bollinger
-│       ├── portfolio.py       # Simulación de portafolios y Sharpe
-│       ├── risk.py            # VaR, CVaR y simulación Monte Carlo
-│       ├── sentiment.py       # Análisis de sentimiento con FinancialBERT
-│       ├── cli.py             # Herramienta de línea de comandos (Typer/Rich)
-│       └── opt_pyFE.py        # Módulo unificado para retrocompatibilidad
+│   ├── trading_unam/          # Paquete principal
+│   │   ├── __init__.py        # API pública limpia y controlada (__all__)
+│   │   ├── data.py            # Descarga de datos y rendimientos
+│   │   ├── analytics.py       # Medias móviles, regresión y Bollinger
+│   │   ├── portfolio.py       # Simulación de portafolios y Sharpe
+│   │   ├── risk.py            # VaR, CVaR y simulación Monte Carlo
+│   │   ├── sentiment.py       # Análisis de sentimiento con FinancialBERT
+│   │   ├── cli.py             # Herramienta de línea de comandos (Typer/Rich)
+│   │   └── trading_unam.py    # Módulo unificado de funciones
+│   └── opt_pyFE/              # Capa de compatibilidad retrospectiva
 ├── examples/
-│   ├── tutorial_opt_pyFE.py   # Tutorial completo ejecutable de inicio a fin
+│   ├── tutorial_trading_unam.py # Tutorial completo ejecutable de inicio a fin
 │   └── bert_sentiment_demo.py # Demo interactiva de análisis de sentimiento
 └── tests/                     # Suite completa de pruebas unitarias (pytest)
     ├── test_data.py
@@ -81,7 +83,7 @@ opt_pyFE/
     ├── test_portfolio.py
     ├── test_risk.py
     ├── test_imports.py
-    └── test_opt_pyFE.py
+    └── test_trading_unam.py
 ```
 
 ---
@@ -90,52 +92,52 @@ opt_pyFE/
 
 Puedes ejecutar el script interactivo completo con:
 ```bash
-python examples/tutorial_opt_pyFE.py
+python examples/tutorial_trading_unam.py
 ```
 
 O utilizar las funciones directamente en tus propios scripts o notebooks:
 
 ### 1. Ingesta de datos y cálculo de rendimientos
 ```python
-import opt_pyFE as opt
+import trading_unam as tu
 
 tickers = ["AAPL", "MSFT", "GOOGL", "AMZN"]
 start_date = "2023-01-01"
 end_date = "2025-01-01"
 
 # Descarga de precios de cierre
-precios = opt.descargar_datos(tickers, start_date=start_date, end_date=end_date)
+precios = tu.descargar_datos(tickers, start_date=start_date, end_date=end_date)
 
 # Rendimientos logarítmicos
-rendimientos_log = opt.calcular_rendimientos_log(precios)
+rendimientos_log = tu.calcular_rendimientos_log(precios)
 
 # Rendimientos simples, media diaria y matriz de covarianza
-rendimientos, media_rend, covmatrix = opt.getdata(tickers, start=start_date, end=end_date)
+rendimientos, media_rend, covmatrix = tu.getdata(tickers, start=start_date, end=end_date)
 ```
 
 ### 2. Analítica técnica (Regresión y Bandas de Bollinger)
 ```python
 # Proyección con regresión lineal y media móvil
-pendientes = opt.proyeccion("AAPL", start_date=start_date, end_date=end_date, window=50, plot=True)
+pendientes = tu.proyeccion("AAPL", start_date=start_date, end_date=end_date, window=50, plot=True)
 print("Pendiente obtenida:", pendientes)
 
 # Bandas de Bollinger
-datos_bollinger = opt.bandas_bollinger(["AAPL", "MSFT"], start_date=start_date, end_date=end_date, window=20, plot=True)
+datos_bollinger = tu.bandas_bollinger(["AAPL", "MSFT"], start_date=start_date, end_date=end_date, window=20, plot=True)
 ```
 
 ### 3. Simulación y optimización de portafolios
 ```python
 # Simular 5,000 portafolios aleatorios
-weights, ret_esp, vol_esp, sharpe = opt.simular_portafolios(rendimientos_log, num_portafolios=5000)
+weights, ret_esp, vol_esp, sharpe = tu.simular_portafolios(rendimientos_log, num_portafolios=5000)
 
 # Encontrar el portafolio de Máximo Ratio de Sharpe
-best_weights, ret_opt, vol_opt, max_sharpe = opt.encontrar_mejor_portafolio(
+best_weights, ret_opt, vol_opt, max_sharpe = tu.encontrar_mejor_portafolio(
     weights, ret_esp, vol_esp, sharpe
 )
-opt.mostrar_resultados(tickers, best_weights, ret_opt, vol_opt, max_sharpe)
+tu.mostrar_resultados(tickers, best_weights, ret_opt, vol_opt, max_sharpe)
 
 # Encontrar el portafolio de Mínima Varianza
-min_w, min_ret, min_vol, min_s = opt.encontrar_minima_varianza(
+min_w, min_ret, min_vol, min_s = tu.encontrar_minima_varianza(
     weights, ret_esp, vol_esp, sharpe
 )
 ```
@@ -151,11 +153,11 @@ inversion_inicial = 100_000.0 # $100,000 USD
 ret_portafolio = rendimientos.dot(best_weights)
 
 # 1. VaR y CVaR Histórico al 95% de confianza (alpha=5)
-h_var = -opt.historical_var(ret_portafolio, alpha=5.0) * np.sqrt(time_horizon)
-h_cvar = -opt.historical_cvar(ret_portafolio, alpha=5.0) * np.sqrt(time_horizon)
+h_var = -tu.historical_var(ret_portafolio, alpha=5.0) * np.sqrt(time_horizon)
+h_cvar = -tu.historical_cvar(ret_portafolio, alpha=5.0) * np.sqrt(time_horizon)
 
 # 2. Simulación Monte Carlo
-portfolio_sims, port_results = opt.monte_carlo_sim(
+portfolio_sims, port_results = tu.monte_carlo_sim(
     mc_sims=1000,
     T=time_horizon,
     media_rendimiento=media_rend,
@@ -166,14 +168,14 @@ portfolio_sims, port_results = opt.monte_carlo_sim(
 )
 
 # VaR y CVaR por Monte Carlo
-mc_var_val = inversion_inicial - opt.mc_var(port_results, alpha=5.0)
-mc_cvar_val = inversion_inicial - opt.mc_cvar(port_results, alpha=5.0)
+mc_var_val = inversion_inicial - tu.mc_var(port_results, alpha=5.0)
+mc_cvar_val = inversion_inicial - tu.mc_cvar(port_results, alpha=5.0)
 
 # Desempeño estimado
-p_ret, p_std = opt.desempeno(best_weights, media_rend, covmatrix, time=time_horizon)
+p_ret, p_std = tu.desempeno(best_weights, media_rend, covmatrix, time=time_horizon)
 
 # Resumen estructurado
-opt.resumen_riesgo(
+tu.resumen_riesgo(
     inversion_inicial=inversion_inicial,
     initialPortfolio=inversion_inicial,
     hVaR=h_var,
@@ -186,7 +188,7 @@ opt.resumen_riesgo(
 
 ### 5. Análisis de Sentimiento Financiero (NLP)
 ```python
-from opt_pyFE import analizar_sentimiento
+from trading_unam import analizar_sentimiento
 
 noticias = [
     "Apple beats quarterly revenue expectations driven by iPhone sales.",
@@ -201,13 +203,13 @@ print(resultados)
 
 ## Uso desde la Terminal (CLI)
 
-El paquete incluye una interfaz de comandos `opt-pyfe`:
+El paquete incluye la interfaz de comandos `trading-unam` (con alias `opt-pyfe`):
 ```bash
 # Ver versión
-opt-pyfe version
+trading-unam version
 
 # Optimizar portafolio directamente en la terminal
-opt-pyfe optimize AAPL MSFT NVDA GOOGL --start 2023-01-01 --end 2024-01-01 --sims 4000
+trading-unam optimize AAPL MSFT NVDA GOOGL --start 2023-01-01 --end 2024-01-01 --sims 4000
 ```
 
 ---
@@ -247,7 +249,7 @@ Para verificar que el registro sea exitoso sin afectar la versión de producció
    * En contraseña ingresa el token con prefijo: `pypi-...`
 3. Comprueba la instalación desde TestPyPI:
    ```bash
-   pip install --index-url https://test.pypi.org/simple/ --no-deps opt_pyFE
+   pip install --index-url https://test.pypi.org/simple/ --no-deps trading_unam
    ```
 
 ### Paso 5: Publicación oficial en PyPI (Producción)
@@ -260,11 +262,11 @@ Para verificar que el registro sea exitoso sin afectar la versión de producció
    * En usuario ingresa: `__token__`
    * En contraseña pega tu token: `pypi-...`
 
-¡Listo! A partir de ese momento, cualquier persona en el mundo podrá instalar la librería con `pip install opt_pyFE`.
+¡Listo! A partir de ese momento, cualquier persona en el mundo podrá instalar la librería con `pip install trading_unam`.
 
 ### Paso 6: Publicación automatizada mediante GitHub Actions (Opcional)
 El repositorio ya incluye el workflow [`.github/workflows/publish.yml`](.github/workflows/publish.yml). Para publicar automáticamente:
-1. Ve a la configuración de tu repositorio en PyPI y habilita **Trusted Publishing** vinculando `alfredo203/opt_pyFE`.
+1. Ve a la configuración de tu repositorio en PyPI y habilita **Trusted Publishing** vinculando `alfredo203/trading_unam`.
 2. O bien agrega el secreto `PYPI_API_TOKEN` en tu repositorio de GitHub (*Settings > Secrets and variables > Actions*).
 3. Cada vez que crees un **Release** en GitHub, el paquete se compilará, correrá los tests y se publicará en PyPI de forma 100% desatendida.
 

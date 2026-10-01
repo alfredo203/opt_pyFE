@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from opt_pyFE import (
+from trading_unam import (
     historical_var,
     historical_cvar,
     monte_carlo_sim,

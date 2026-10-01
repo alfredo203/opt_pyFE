@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install opt_pyFE, run this command in your terminal:
+To install Trading UNAM, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install opt_pyFE
+    $ pip install trading_unam
 
-This is the preferred method to install opt_pyFE, as it will always install the most recent stable release.
+This is the preferred method to install Trading UNAM, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,26 +26,19 @@ you through the process.
 From sources
 ------------
 
-The sources for opt_pyFE can be downloaded from the `Github repo`_.
+The sources for Trading UNAM can be downloaded from the `Github repo`_.
 
-You can either clone the public repository:
-
-.. code-block:: console
-
-    $ git clone git://github.com/[EDN23,gabrielaadehesa,Dayjingg,Deon9802,alfredo203]/opt_pyFE
-
-Or download the `tarball`_:
+You can clone the public repository:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/[EDN23,gabrielaadehesa,Dayjingg,Deon9802,alfredo203]/opt_pyFE/tarball/master
+    $ git clone https://github.com/alfredo203/trading_unam.git
 
-Once you have a copy of the source, you can install it with:
+Once you have a copy of the source, you can install it in development mode with:
 
 .. code-block:: console
 
-    $ python setup.py install
+    $ pip install -e .
 
 
-.. _Github repo: https://github.com/[EDN23,gabrielaadehesa,Dayjingg,Deon9802,alfredo203]/opt_pyFE
-.. _tarball: https://github.com/[EDN23,gabrielaadehesa,Dayjingg,Deon9802,alfredo203]/opt_pyFE/tarball/master
+.. _Github repo: https://github.com/alfredo203/trading_unam

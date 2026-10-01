@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from opt_pyFE import (
+from trading_unam import (
     simular_portafolios,
     encontrar_mejor_portafolio,
     encontrar_minima_varianza,

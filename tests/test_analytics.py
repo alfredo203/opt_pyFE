@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from opt_pyFE import proyeccion, bandas_bollinger
+from trading_unam import proyeccion, bandas_bollinger
 
 
 @pytest.fixture

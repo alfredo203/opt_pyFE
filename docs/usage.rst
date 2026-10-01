@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use opt_pyFE in a project::
+To use Trading UNAM in a project::
 
-    import opt_pyFE
+    import trading_unam as tu

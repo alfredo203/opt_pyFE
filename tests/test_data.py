@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from opt_pyFE import calcular_rendimientos_log
+from trading_unam import calcular_rendimientos_log
 
 
 def test_calcular_rendimientos_log():
